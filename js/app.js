@@ -133,7 +133,7 @@ function getSquareElement() {
 /*******************************************
     funzione che gestisce il click
 *******************************************/
-function clickHandler(e) {
+function clickHandler() {
     // console.log(e.composedPath()[1]);
     // console.log(this);
 
@@ -163,9 +163,10 @@ function clickHandler(e) {
     // controllo se ho trovato una bomba
     if (bombsArray.includes(parseInt(matrix[x][y].dataset.myCell))) {
         statusImg.src = "img/sad.png"
-        matrix[x][y].innerHTML = '&#128163';
-        matrix[x][y].classList.add('bomb')
-        revealAll();
+        matrix[x][y].innerHTML = '&#128165;';
+        matrix[x][y].classList.add('bomb');
+        bombsNumElement.innerHTML = "Game over! :(";
+        revealAll(matrix[x][y]);
         clearGame();
     } else { // altrimenti svelo l'area adiacente senza bombe
         revealArea(x, y);
@@ -234,23 +235,6 @@ const unique = (value, index, self) => {
     return self.indexOf(value) === index;
 }
 
-// function insertBombs(bombs, grid) {
-//     for (let i = 0; i < grid.length; i++) {
-//         for (let j = 0; j < bombs.length; j++) {
-//             if (bombs[j] === i) {
-//                 grid[i].classList.add('bomb');
-//                 // console.log(grid[i]);
-//             }
-//         }
-//     }
-
-//     //TODO: SUPERFLUO - PER CHEATTARE
-//     // stampo in console dove sono le bombe
-//     for (let i = 0; i < bombs.length; i++) {
-//         console.log((bombs[i] + 1));
-//     }
-// }
-
 /*******************************************
     funzione che trasforma una griglia
     in una matrice
@@ -317,6 +301,7 @@ function addHandler(matrix) {
     degli elementi adiacenti
 *******************************************/
 function revealArea(x, y) {
+    // inizializzo il contatore di bombe
     let counter = 0;
     // console.log(counter);
     // in ogni caso, se sto controllando, rivelo la casella
@@ -335,11 +320,15 @@ function revealArea(x, y) {
 
     // controllo a riga -1, riga e riga+1
     for (let i = x - 1; i <= x + 1; i++) {
+        // SE l'indice esiste
         if (i >= 0 && i < matrix.length) {
             // controllo a colonna -1, colonna e colonna+1
             for (let j = y - 1; j <= y + 1; j++) {
+                // SE l'indice esiste
                 if (j >= 0 && j < matrix.length) {
+                    // SE è una bomba
                     if (bombsArray.includes(parseInt(matrix[i][j].dataset.myCell))) {
+                        // incremento il contatore di bombe
                         counter++;
                     }
                 }
@@ -373,12 +362,14 @@ function revealArea(x, y) {
 }
 
 // funzione che svela tutte le celle
-function revealAll() {
+function revealAll(explosion) {
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix.length; y++) {
             if (bombsArray.includes(parseInt(matrix[x][y].dataset.myCell))) {
-                matrix[x][y].innerHTML = '&#128163';
-                matrix[x][y].classList.add('bomb')
+                if (matrix[x][y] !== explosion) {
+                    matrix[x][y].innerHTML = '&#128163';
+                    matrix[x][y].classList.add('bomb')
+                }
             }
             matrix[x][y].classList.add('clicked');
         }
