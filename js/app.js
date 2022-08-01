@@ -89,9 +89,10 @@ function playGame() {
     // aggiungo il clickHandler a tutti gli elementi della griglia
     addHandler();
 
-    // evento flag btn
+    // evento flag btn & reset
     flagBtn.innerHTML = "Flag &#9872;";
     flag = false;
+    flagBtn.classList.remove('disabled');
     flagBtn.addEventListener('click', changeHandler);
 
 }
