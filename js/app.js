@@ -43,40 +43,36 @@ function playGame() {
     // recupero difficoltà dal DOM
     rowNum = parseInt(document.querySelector('select').value);
 
-    // controllo se l'utente fa delle "furbate" con l'inspector
+    // controllo SE l'utente fa delle "furbate" con l'inspector
     if ((rowNum !== 10 && rowNum !== 15 && rowNum !== 20) || isNaN(rowNum)) {
+        // imposto difficoltà massima
         rowNum = 20;
     }
 
     // imposto lo stile in base alla difficoltà
     tableContainerElement.style.gridTemplateColumns = `repeat(${rowNum},1fr)`;
 
-
+    // calcolo il numero di celle
     const cellsNum = rowNum ** 2;
 
-    // Creo la griglia in html
+    // TODO: avrei potuto fare direttamente la matrice?
+    // creo la griglia in html
     myGrid = createGrid(cellsNum);
     // console.log(myGrid);
 
-
+    // calcolo il numero di bombe
     let bombsNum = getBombsNum(rowNum);
     // console.log(bombsNum);
 
     // metto nel DOM il numero di caselle libere
     bombsNumElement.innerHTML = cellsNum - bombsNum
 
-    // genero un array di numeri random
-    // const bombsArray = getBombsArray(bombsNum, cellsNum);
+    // genero un array di numeri random => posizioni delle bombe
     bombsArray = getBombsArray(bombsNum, cellsNum);
     // TODO: per vedere dove sono le bombe
     // console.log(bombsArray);
 
-    // inserisco le bombe
-    // insertBombs(bombsArray, myGrid);
-
-    // TODO: la matrice dovrebbe essere superflua qua... bisogna quindi chiamare addHandler su myGrid e modificare la funziona di conseguenza - DA VERIFICARE
-
-    // Creo una matrice
+    // genero la matrice
     matrix = createMatrix(rowNum, myGrid);
     // console.log(matrix);
 
@@ -100,22 +96,23 @@ function createGrid(dim) {
         tableContainerElement.innerHTML = '';
     }
 
-    // console.log('OK', dim, tableContainer);
-
-    // PER OGNI ciclo generare elemento html (square) e lo inserisco nel DOM
+    // PER OGNI ciclo genero un elemento html (square) e lo inserisco nel DOM
     for (let i = 0; i < dim; i++) {
         const cell = getSquareElement();
 
+        // imposto un dataset da 0 a dim alle celle
         cell.dataset.myCell = i;
 
         //TODO: DA AGGIUNGERE PER CHEATTARE CON LA CONSOLE!!!
         // cell.innerHTML = i + 1;
 
-        // appendere elemento al tabellone
+        // appendo elemento al tabellone
         tableContainerElement.append(cell);
+        // e lo inserisco nell'array grid
         grid.push(cell);
     }
 
+    // ritorno la griglia grid
     return grid;
 }
 
@@ -172,9 +169,6 @@ function clickHandler() {
         revealArea(x, y);
     }
 
-    // scrivo in console il numero della cella
-    // console.log(square.innerHTML);
-
     // dobbiamo far sì che una volta partita la funzione venga rimosso l'evento
     matrix[x][y].removeEventListener('click', clickHandler);
 }
@@ -199,14 +193,16 @@ function clearGame() {
     presenti
 *******************************************/
 const getBombsNum = (dim) => {
-    if (dim === 10) {
-        return dim;
-    } else if (dim === 15) {
-        return dim * 2;
-    } else {
-        return dim * 3;
+    switch (dim) {
+        case 15:
+            dim *= 2;
+            break;
+        case 20:
+            dim *= 3;
+            break;
     }
-    // console.log("NUMERO: ", bombsNum);
+    // console.log("NUMERO: ", dim);
+    return dim;
 }
 
 /*******************************************
