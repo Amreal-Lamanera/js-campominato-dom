@@ -25,6 +25,10 @@ let bombsArray = [];
 let myGrid = [];
 // variabile globale contenente la matrice
 let matrix = [];
+// recupero il flag button
+const flagBtn = document.getElementById('flagBtn');
+// variabile per lo scambio di flagBtn
+let flag;
 
 /****************************************************************
     funzione di avvio del gioco
@@ -44,17 +48,16 @@ function playGame() {
     rowNum = parseInt(document.querySelector('select').value);
 
     // controllo SE l'utente fa delle "furbate" con l'inspector
-    if ((rowNum !== 10 && rowNum !== 14 && rowNum !== 20) || isNaN(rowNum)) {
+    if ((rowNum !== 10 && rowNum !== 14 && rowNum !== 22) || isNaN(rowNum)) {
         // imposto difficoltà massima
-        rowNum = 20;
+        rowNum = 22;
     }
 
-    // TODO: da rivedere
     // implemento una modalità mobile che lavorerà sulla metà delle caselle ( per gestire meglio il layout)
     const mediaQuery = window.matchMedia('(min-width: 576px)')
     if (!mediaQuery.matches) {
         rowNum /= 2;
-        document.getElementById('long').classList.remove('d-none');
+        document.getElementById('flagBtn').classList.remove('d-none');
     }
 
     // imposto lo stile in base alla difficoltà
@@ -84,7 +87,12 @@ function playGame() {
     // console.log(matrix);
 
     // aggiungo il clickHandler a tutti gli elementi della griglia
-    addHandler(matrix);
+    addHandler();
+
+    // evento flag btn
+    flagBtn.innerHTML = "Flag &#9872;";
+    flag = false;
+    flagBtn.addEventListener('click', changeHandler);
 
 }
 
@@ -135,16 +143,10 @@ function getSquareElement() {
 }
 
 /****************************************************************
-    funzione che gestisce il click
+    funzione che gestisce l'event reveal
 ****************************************************************/
-function clickHandler() {
-    // console.log(e.composedPath()[1]);
-    // console.log(this);
-
-    // TODO: NON POSSO passare parametri, altrimenti il remove listener è IMPOSSIBILE!!!!! @MAURO
-    // HO PROVATO in tutti i modi dell'internette
-
-    // mi serve: x, y
+function revealHandler() {
+    // mi servono gli indici della matrice all'elemento che sto utilizzando
     let x;
     let y;
 
@@ -157,12 +159,9 @@ function clickHandler() {
             }
         }
     }
-    // console.log(x, y);
 
     // aggiungo classe clicked in ogni caso
     matrix[x][y].classList.toggle('clicked');
-
-    // console.log(matrix[x][y].classList);
 
     // controllo se ho trovato una bomba
     if (bombsArray.includes(parseInt(matrix[x][y].dataset.myCell))) {
@@ -177,7 +176,7 @@ function clickHandler() {
     }
 
     // dobbiamo far sì che una volta partita la funzione venga rimosso l'evento
-    matrix[x][y].removeEventListener('click', clickHandler);
+    matrix[x][y].removeEventListener('click', revealHandler);
 }
 
 /****************************************************************
@@ -190,7 +189,8 @@ function clearGame() {
 
     // PER OGNI elemento square, rimuovo l'evento click
     for (let i = 0; i < squareElements.length; i++) {
-        squareElements[i].removeEventListener('click', clickHandler);
+        squareElements[i].removeEventListener('click', revealHandler);
+        squareElements[i].removeEventListener('click', flagHandler);
         // console.dir(squareElements[i]);
     }
 }
@@ -203,18 +203,17 @@ const getBombsNum = (dim) => {
         case 14:
             dim *= 2;
             break;
-        case 20:
+        case 22:
             dim *= 3;
             break;
-        // TODO: PROVA MEDIA Q
+        // versione mobile
         case 7:
             dim += 3;
             break;
-        case 10:
+        case 11:
             dim += 5;
             break;
     }
-    // console.log("NUMERO: ", dim);
     return dim;
 }
 
@@ -255,64 +254,97 @@ function createMatrix(row, grid) {
         }
         matrixX.push(matrixY);
     }
-
-    // for (let x = 0; x < row; x++) {
-    //     for (let y = 0; y < row; y++) {
-    //         console.log((parseInt(matrixX[x][y].dataset.myCell)));
-    //     }
-    // }
     return matrixX;
 }
 
 /****************************************************************
-    funzione che aggiunge gli event a tutti gli elementi
+    funzione che aggiunge l'event reveal a tutti gli elementi
 ****************************************************************/
-function addHandler(matrix) {
+function addHandler() {
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix.length; y++) {
-            // matrix[x][y].addEventListener('click', function () {
-            //     clickHandler(matrix, x, y);
-            // });
-            // console.log(matrix[x][y]);
-            matrix[x][y].addEventListener('click', clickHandler);
+            if (!matrix[x][y].classList.contains('clicked')) {
+                matrix[x][y].addEventListener('click', revealHandler);
 
-            // TODO: try clickHandler.bind(matrix[x][y],matrix)
+                // TODO: try clickHandler.bind(matrix[x][y],matrix)
 
-            // implemento la bandierina col click destro
-            matrix[x][y].addEventListener('contextmenu', function (ev) {
-                ev.preventDefault();
+                // implemento la bandierina col click destro
+                matrix[x][y].addEventListener('contextmenu', function (ev) {
+                    ev.preventDefault();
 
-                if (!this.classList.contains('clicked')) {
-                    if (this.innerHTML == '') {
-                        this.innerHTML = '&#9873;';
-                    } else {
-                        this.innerHTML = '';
+                    if (!this.classList.contains('clicked')) {
+                        if (this.innerHTML == '') {
+                            this.innerHTML = '&#9873;';
+                        } else {
+                            this.innerHTML = '';
+                        }
                     }
-                }
-                return false;
-            }, false);
-
-            matrix[x][y].addEventListener('long-press', function (ev) {
-                ev.preventDefault();
-
-                if (!this.classList.contains('clicked')) {
-                    if (this.innerHTML == '') {
-                        this.innerHTML = '&#9873;';
-                    } else {
-                        this.innerHTML = '';
-                    }
-                }
-                return false;
-            }, false);
+                    return false;
+                }, false);
+            }
         }
     }
 }
 
-// const handler = function (matrix, x, y) {
-//     return function removeHandler() {
-//         clickHandler(matrix, x, y);
-//     }
-// }
+/****************************************************************
+    TODO:   FUNZIONI CHE LAVORANO SOLO SU MOBILE
+****************************************************************/
+
+/****************************************************************
+    funzione che cambia l'handler reveal-flag
+****************************************************************/
+function changeHandler() {
+    if (!flag) {
+        clearGame();
+        addFlagHandler();
+        flagBtn.innerHTML = "Reveal";
+        flag = true;
+    }
+    else {
+        clearGame();
+        addHandler();
+        flagBtn.innerHTML = "Flag &#9872;";
+        flag = false;
+    }
+}
+
+/****************************************************************
+    funzione che aggiunge l'event flag a tutti gli elementi
+****************************************************************/
+function addFlagHandler() {
+    for (let x = 0; x < matrix.length; x++) {
+        for (let y = 0; y < matrix.length; y++) {
+            if (!matrix[x][y].classList.contains('clicked')) {
+                matrix[x][y].addEventListener('click', flagHandler);
+            }
+        }
+    }
+}
+
+/****************************************************************
+    funzione che gestisce l'event flag
+****************************************************************/
+function flagHandler() {
+    let x;
+    let y;
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (matrix[i][j] === this) {
+                x = i;
+                y = j;
+                break;
+            }
+        }
+    }
+    if (!matrix[x][y].classList.contains('clicked')) {
+        if (matrix[x][y].innerHTML == '') {
+            matrix[x][y].innerHTML = '&#9873;';
+        } else {
+            matrix[x][y].innerHTML = '';
+        }
+    }
+}
 
 /****************************************************************
     funzione che gestisce il rivelamento degli elementi adiacenti
@@ -320,10 +352,8 @@ function addHandler(matrix) {
 function revealArea(x, y) {
     // inizializzo il contatore di bombe
     let counter = 0;
-    // console.log(counter);
     // in ogni caso, se sto controllando, rivelo la casella
     matrix[x][y].classList.add('clicked');
-    // console.log(matrix[x][y].classList);
 
     //decremento contatore celle da rivelare
     bombsNumElement.innerHTML -= 1;
@@ -353,7 +383,7 @@ function revealArea(x, y) {
         }
     }
 
-    // in ogni caso, se sto controllando, inserisco il risultato del conteggio bombe adiacenti nella casella
+    // in ogni caso inserisco il risultato del conteggio bombe adiacenti nella casella
     matrix[x][y].innerHTML = counter;
 
     // controllo a riga -1, riga e riga+1
