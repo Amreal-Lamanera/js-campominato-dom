@@ -209,11 +209,11 @@ const getBombsNum = (dim) => {
             dim *= 3;
             break;
         // versione mobile
-        case 7:
-            dim += 3;
+        case 5:
+            dim -= 2;
             break;
         case 11:
-            dim += 5;
+            dim += 4;
             break;
     }
     return dim;
