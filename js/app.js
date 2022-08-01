@@ -44,7 +44,7 @@ function playGame() {
     rowNum = parseInt(document.querySelector('select').value);
 
     // controllo SE l'utente fa delle "furbate" con l'inspector
-    if ((rowNum !== 10 && rowNum !== 15 && rowNum !== 20) || isNaN(rowNum)) {
+    if ((rowNum !== 10 && rowNum !== 14 && rowNum !== 20) || isNaN(rowNum)) {
         // imposto difficoltà massima
         rowNum = 20;
     }
@@ -68,9 +68,8 @@ function playGame() {
     myGrid = createGrid(cellsNum);
     // console.log(myGrid);
 
-    // calcolo il numero di bombe
     let bombsNum = getBombsNum(rowNum);
-    // console.log(bombsNum);
+    console.log(bombsNum);
 
     // metto nel DOM il numero di caselle libere
     bombsNumElement.innerHTML = cellsNum - bombsNum
@@ -202,11 +201,18 @@ function clearGame() {
 *******************************************/
 const getBombsNum = (dim) => {
     switch (dim) {
-        case 15:
+        case 14:
             dim *= 2;
             break;
         case 20:
             dim *= 3;
+            break;
+        // TODO: PROVA MEDIA Q
+        case 7:
+            dim += 3;
+            break;
+        case 10:
+            dim += 5;
             break;
     }
     // console.log("NUMERO: ", dim);
