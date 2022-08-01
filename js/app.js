@@ -26,9 +26,9 @@ let myGrid = [];
 // variabile globale contenente la matrice
 let matrix = [];
 
-/*******************************************
+/****************************************************************
     funzione di avvio del gioco
-*******************************************/
+****************************************************************/
 function playGame() {
     // rivelo il contatore
     toRevealElement.classList.remove('d-none');
@@ -53,7 +53,6 @@ function playGame() {
     // implemento una modalità mobile che lavorerà sulla metà delle caselle ( per gestire meglio il layout)
     const mediaQuery = window.matchMedia('(min-width: 576px)')
     if (!mediaQuery.matches) {
-        // Then trigger an alert
         rowNum /= 2;
     }
 
@@ -88,9 +87,9 @@ function playGame() {
 
 }
 
-/*******************************************
+/****************************************************************
     funzione che crea la griglia
-*******************************************/
+****************************************************************/
 function createGrid(dim) {
     // console.log(tableContainer.innerHTML);
 
@@ -123,9 +122,9 @@ function createGrid(dim) {
     return grid;
 }
 
-/*******************************************
+/****************************************************************
     funzione che crea l'elemento casella
-*******************************************/
+****************************************************************/
 function getSquareElement() {
     const square = document.createElement('div');
     square.classList.add('square');
@@ -134,9 +133,9 @@ function getSquareElement() {
     return square;
 }
 
-/*******************************************
+/****************************************************************
     funzione che gestisce il click
-*******************************************/
+****************************************************************/
 function clickHandler() {
     // console.log(e.composedPath()[1]);
     // console.log(this);
@@ -180,9 +179,9 @@ function clickHandler() {
     matrix[x][y].removeEventListener('click', clickHandler);
 }
 
-/*******************************************
+/****************************************************************
     funzione che rimuove gli eventi
-*******************************************/
+****************************************************************/
 function clearGame() {
     // so che se non è vuoto, tutti gli elementi avranno ALMENO la classe square
     const squareElements = document.querySelectorAll('.square');
@@ -195,10 +194,9 @@ function clearGame() {
     }
 }
 
-/*******************************************
-    funzione che genera il numero di bombe
-    presenti
-*******************************************/
+/****************************************************************
+    funzione che genera il numero di bombe presenti
+****************************************************************/
 const getBombsNum = (dim) => {
     switch (dim) {
         case 14:
@@ -219,10 +217,9 @@ const getBombsNum = (dim) => {
     return dim;
 }
 
-/*******************************************
-    funzione che genera un array con la
-    posizione delle bombe
-*******************************************/
+/****************************************************************
+    funzione che genera un array con la posizione delle bombe
+****************************************************************/
 const getBombsArray = (dim, num) => {
     const array = [];
     for (let i = 0; i < dim; i++) {
@@ -237,18 +234,16 @@ const getBombsArray = (dim, num) => {
     return array;
 }
 
-/*******************************************
-    funzione di supporto al filtro per
-    eliminare doppioni da un array
-*******************************************/
+/****************************************************************
+    funzione di supporto al filtro per eliminare doppioni da un array
+****************************************************************/
 const unique = (value, index, self) => {
     return self.indexOf(value) === index;
 }
 
-/*******************************************
-    funzione che trasforma una griglia
-    in una matrice
-*******************************************/
+/****************************************************************
+    funzione che trasforma una griglia in una matrice
+****************************************************************/
 function createMatrix(row, grid) {
     const matrixX = [];
     let index = 0;
@@ -268,10 +263,10 @@ function createMatrix(row, grid) {
     return matrixX;
 }
 
-/*******************************************
+/****************************************************************
     funzione che aggiunge gli event
     a tutti gli elementi
-*******************************************/
+****************************************************************/
 function addHandler(matrix) {
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix.length; y++) {
@@ -306,10 +301,9 @@ function addHandler(matrix) {
 //     }
 // }
 
-/*******************************************
-    funzione che gestisce il rivelamento
-    degli elementi adiacenti
-*******************************************/
+/****************************************************************
+    funzione che gestisce il rivelamento degli elementi adiacenti
+****************************************************************/
 function revealArea(x, y) {
     // inizializzo il contatore di bombe
     let counter = 0;
@@ -371,7 +365,9 @@ function revealArea(x, y) {
     }
 }
 
-// funzione che svela tutte le celle
+/****************************************************************
+    funzione che svela tutte le celle
+****************************************************************/
 function revealAll(explosion) {
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix.length; y++) {
