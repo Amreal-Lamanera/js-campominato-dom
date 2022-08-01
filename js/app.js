@@ -302,8 +302,7 @@ function addHandler(matrix) {
                         this.innerHTML = '';
                     }
                 }
-                return false;
-            }, false);
+            });
         }
     }
 }
