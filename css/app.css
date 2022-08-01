@@ -107,7 +107,7 @@ button .navbar-toggler-icon {
 }
 
 .square {
-    width: 18px;
+    width: 30px;
     aspect-ratio: 1;
     border: 1px solid white;
     display: flex;

@@ -49,6 +49,14 @@ function playGame() {
         rowNum = 20;
     }
 
+    // TODO: da rivedere
+    // implemento una modalità mobile che lavorerà sulla metà delle caselle ( per gestire meglio il layout)
+    const mediaQuery = window.matchMedia('(min-width: 576px)')
+    if (!mediaQuery.matches) {
+        // Then trigger an alert
+        rowNum /= 2;
+    }
+
     // imposto lo stile in base alla difficoltà
     tableContainerElement.style.gridTemplateColumns = `repeat(${rowNum},1fr)`;
 
