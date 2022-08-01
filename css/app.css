@@ -35,6 +35,12 @@ footer a {
     font-size: 0.75rem;
 }
 
+@media (min-width:992px) {
+    footer a {
+        font-size: 1rem;
+    }
+}
+
 footer a:hover {
     color: #FFF;
     text-decoration: underline;
