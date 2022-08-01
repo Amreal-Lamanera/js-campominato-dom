@@ -54,6 +54,7 @@ function playGame() {
     const mediaQuery = window.matchMedia('(min-width: 576px)')
     if (!mediaQuery.matches) {
         rowNum /= 2;
+        document.getElementById('long').classList.remove('d-none');
     }
 
     // imposto lo stile in base alla difficoltà
@@ -264,8 +265,7 @@ function createMatrix(row, grid) {
 }
 
 /****************************************************************
-    funzione che aggiunge gli event
-    a tutti gli elementi
+    funzione che aggiunge gli event a tutti gli elementi
 ****************************************************************/
 function addHandler(matrix) {
     for (let x = 0; x < matrix.length; x++) {
@@ -280,6 +280,19 @@ function addHandler(matrix) {
 
             // implemento la bandierina col click destro
             matrix[x][y].addEventListener('contextmenu', function (ev) {
+                ev.preventDefault();
+
+                if (!this.classList.contains('clicked')) {
+                    if (this.innerHTML == '') {
+                        this.innerHTML = '&#9873;';
+                    } else {
+                        this.innerHTML = '';
+                    }
+                }
+                return false;
+            }, false);
+
+            matrix[x][y].addEventListener('long-press', function (ev) {
                 ev.preventDefault();
 
                 if (!this.classList.contains('clicked')) {
