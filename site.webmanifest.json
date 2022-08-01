@@ -1,0 +1,13 @@
+{
+    "shortname": "Minato",
+    "name": "Campo Minato Wannabe",
+    "icons": [
+        {
+            "src": "img/smile.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ],
+    "theme_color": "#242424",
+    "display": "fullscreen"
+}

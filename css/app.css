@@ -1,0 +1,151 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+.logo img {
+    width: 100px;
+}
+
+body {
+    height: 100vh;
+}
+
+header {
+    flex-basis: 0;
+    background-color: #242424;
+}
+
+main {
+    flex-basis: 0;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(76, 76, 76);
+}
+
+footer {
+    flex-basis: 0;
+    background-color: rgb(36, 36, 36);
+}
+
+footer a {
+    color: #FFF;
+    text-decoration: none;
+    font-size: 0.75rem;
+}
+
+footer a:hover {
+    color: #FFF;
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 992px) {
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+button .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+/* .btns {
+    font-size: 1.5rem;
+} */
+
+.btns input,
+.btns select {
+    border-radius: 1.5rem;
+    background-color: white;
+    color: black;
+}
+
+/* .btns select {
+    padding: 0.5rem 1.5rem;
+} */
+
+/* .btns input {
+    padding: 0.25rem 3rem;
+} */
+
+@media (min-width: 992px) {
+
+    .btns {
+        font-size: 1.5rem;
+    }
+
+    .btns input {
+        padding: 0.25rem 3rem;
+        font-size: 1.25rem;
+    }
+
+    .btns select {
+        padding: 0.5rem 1.5rem;
+        font-size: 1.25rem;
+    }
+}
+
+#statusImg {
+    width: 100px;
+    cursor: pointer;
+    /* display: none; */
+}
+
+.tableContainer {
+    display: grid;
+}
+
+.square {
+    width: 18px;
+    aspect-ratio: 1;
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 0.5rem;
+    cursor: pointer;
+    background-color: grey;
+}
+
+@media (min-width:576px) {
+    .square {
+        width: 25px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width:768px) {
+    .square {
+        width: 35px;
+        border: 2px solid white;
+        font-size: 1rem;
+    }
+}
+
+@media (min-width:992px) {
+    .square {
+        width: 40px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (min-width:1200px) {
+    .square {
+        width: 50px;
+        font-size: 2rem;
+    }
+}
+
+.square.clicked {
+    background-color: green;
+}
+
+.square.clicked.bomb {
+    background-color: tomato;
+}
