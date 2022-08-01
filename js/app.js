@@ -170,6 +170,7 @@ function revealHandler() {
         matrix[x][y].classList.add('bomb');
         bombsNumElement.innerHTML = "Game over! :(";
         revealAll(matrix[x][y]);
+        flagBtn.classList.add('disabled');
         clearGame();
     } else { // altrimenti svelo l'area adiacente senza bombe
         revealArea(x, y);
