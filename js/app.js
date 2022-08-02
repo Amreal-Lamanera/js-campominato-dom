@@ -166,18 +166,12 @@ function revealHandler() {
 
     // controllo se ho trovato una bomba
     if (isBomb(matrix[x][y])) {
-        statusImg.src = "img/sad.png"
-        matrix[x][y].innerHTML = '&#128165;';
-        matrix[x][y].classList.add('bomb');
-        bombsNumElement.innerHTML = "Game over! :(";
-        revealAll(matrix[x][y]);
-        flagBtn.classList.add('disabled');
-        clearGame();
+        gameOver(matrix[x][y]);
     } else { // altrimenti svelo l'area adiacente senza bombe
         revealArea(x, y);
     }
 
-    // dobbiamo far sì che una volta partita la funzione venga rimosso l'evento
+    // rimuovo l'evento reveal all'elemento cliccato
     matrix[x][y].removeEventListener('click', revealHandler);
 }
 
@@ -187,6 +181,19 @@ function revealHandler() {
 function isBomb(elem) {
     const num = parseInt(elem.dataset.myCell);
     return bombsArray.includes(num);
+}
+
+/****************************************************************
+    funzione che gestisce il game over
+****************************************************************/
+function gameOver(elem) {
+    statusImg.src = "img/sad.png"
+    elem.innerHTML = '&#128165;';
+    elem.classList.add('bomb');
+    bombsNumElement.innerHTML = "Game over! :(";
+    revealAll(elem);
+    flagBtn.classList.add('disabled');
+    clearGame();
 }
 
 /****************************************************************
@@ -393,10 +400,7 @@ function revealArea(x, y) {
     bombsNumElement.innerHTML -= 1;
     // SE arrivo a 0 => VITTORIA
     if (bombsNumElement.innerHTML == 0) {
-        clearGame();
-        statusImg.src = "img/cool.png";
-        bombsNumElement.innerHTML = "Hai vinto!";
-        revealAll();
+        youWin();
     }
 
     // controllo a riga -1, riga e riga+1
@@ -440,6 +444,13 @@ function revealArea(x, y) {
             }
         }
     }
+}
+
+function youWin() {
+    clearGame();
+    statusImg.src = "img/cool.png";
+    bombsNumElement.innerHTML = "Hai vinto!";
+    revealAll();
 }
 
 /****************************************************************
