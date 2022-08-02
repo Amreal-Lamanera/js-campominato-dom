@@ -29,6 +29,16 @@ let matrix = [];
 const flagBtn = document.getElementById('flagBtn');
 // variabile per lo scambio di flagBtn
 let flag;
+// recupero il timer wrapper
+let timerWrapperElement = document.getElementById('timer-wrapper');
+// recupero il timer
+let timerElement = document.getElementById('timer');
+// variabile per tenere il tempo
+let timer = 0;
+// riferimento al timer
+let timerIntervalRef;
+// variabile contenente il coefficiente di difficoltà
+let coefDiff;
 
 /****************************************************************
     funzione di avvio del gioco
@@ -36,6 +46,16 @@ let flag;
 function playGame() {
     // rivelo il contatore
     toRevealElement.classList.remove('d-none');
+
+    // rivelo il timer
+    timerWrapperElement.classList.remove('d-none');
+
+    // reset del timer in caso di riavvio
+    timerStop();
+    timer = 0;
+    timerElement.innerHTML = '00:00:00'
+    // avvio il timer
+    timerStart();
 
     // rimuovo dal DOM il wannaPlay
     document.getElementById("wannaPlay").style.display = "none";
@@ -71,6 +91,7 @@ function playGame() {
     myGrid = createGrid(cellsNum);
     // console.log(myGrid);
 
+    coefDiff = 1
     let bombsNum = getBombsNum(rowNum);
     console.log(bombsNum);
 
@@ -95,6 +116,43 @@ function playGame() {
     flagBtn.classList.remove('disabled');
     flagBtn.addEventListener('click', changeHandler);
 
+}
+
+/****************************************************************
+    funzione che avvia il timer
+****************************************************************/
+const timerStart = () => {
+    // if (timerIntervalRef) {
+    //     console.log('timer già attivo');
+    //     // interrompo e non faccio niente
+    //     return
+    // }
+    timerIntervalRef = setInterval(() => {
+        timer++;
+        // console.log(timer);
+        timerElement.innerHTML = formatTime(timer);
+    }, 1000);
+}
+
+/****************************************************************
+    funzione che blocca il timer e genera il punteggio
+****************************************************************/
+// il timer verrà bloccato SOLO in caso di vittoria o di sconfitta
+const timerStop = () => {
+    clearInterval(timerIntervalRef);
+}
+
+/****************************************************************
+    funzione per la formattazione del time nel DOM
+****************************************************************/
+const formatTime = (secs) => {
+    const pad = (n) => n < 10 ? `0${n}` : n;
+
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor(secs / 60) - (h * 60);
+    const s = Math.floor(secs - h * 3600 - m * 60);
+
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
 /****************************************************************
@@ -187,10 +245,11 @@ function isBomb(elem) {
     funzione che gestisce il game over
 ****************************************************************/
 function gameOver(elem) {
+    timerStop();
+    bombsNumElement.innerHTML = "Game over! <br> Hai totalizzato: " + calcResult() + " punti";
     statusImg.src = "img/sad.png"
     elem.innerHTML = '&#128165;';
     elem.classList.add('bomb');
-    bombsNumElement.innerHTML = "Game over! :(";
     revealAll(elem);
     flagBtn.classList.add('disabled');
     clearGame();
@@ -218,16 +277,20 @@ function clearGame() {
 const getBombsNum = (dim) => {
     switch (dim) {
         case 14:
+            coefDiff = 2;
             dim *= 2;
             break;
         case 22:
+            coefDiff = 4;
             dim *= 3;
             break;
         // versione mobile
         case 5:
+            coefDiff = 0.5;
             dim -= 2;
             break;
         case 11:
+            coefDiff = 3;
             dim += 4;
             break;
     }
@@ -450,9 +513,10 @@ function revealArea(x, y) {
     funzione che gestisce la vittoria
 ****************************************************************/
 function youWin() {
+    timerStop();
     clearGame();
     statusImg.src = "img/cool.png";
-    bombsNumElement.innerHTML = "Hai vinto!";
+    bombsNumElement.innerHTML = "Hai vinto! <br> Hai totalizzato: " + calcResult() + " punti";
     revealAll();
 }
 
@@ -471,4 +535,31 @@ function revealAll(explosion) {
             matrix[x][y].classList.add('clicked');
         }
     }
+}
+
+/****************************************************************
+    funzione che calcola il risultato finale
+****************************************************************/
+function calcResult() {
+    let result;
+    console.log(rowNum);
+    console.log(bombsArray.length);
+    console.log(parseInt(bombsNumElement.innerHTML));
+    console.log(coefDiff);
+    console.log(timer);
+    let revealedCells = (rowNum ** 2 - bombsArray.length) - parseInt(bombsNumElement.innerHTML)
+
+    // punteggio: celle rivelate * coefficiente - tempo impiegato
+    result = Math.floor((revealedCells * coefDiff) - timer / 4);
+
+    // bonus vittoria
+    if (parseInt(bombsNumElement.innerHTML) === 0) {
+        result += 30;
+    }
+
+    if (result < 0) {
+        result = 0;
+    }
+
+    return result;
 }
