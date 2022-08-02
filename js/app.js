@@ -39,6 +39,29 @@ let timer = 0;
 let timerIntervalRef;
 // variabile contenente il coefficiente di difficoltà
 let coefDiff;
+// recupero info-wrapper
+const infoWrapperElemen = document.getElementById('info-wrapper');
+
+// recupero elemento exit e info
+const exitElemen = document.getElementById('exit');
+const infoElemen = document.getElementById('info');
+
+// aggiungo event listener a info
+infoElemen.addEventListener('click', function () {
+    // recupero layover
+    const layoverElement = document.getElementById('info-layover');
+    // lo rendo visibile
+    layoverElement.classList.remove('d-none');
+})
+
+// aggiungo event listener a exit
+exitElemen.addEventListener('click', function () {
+    // recupero layover
+    const layoverElement = document.getElementById('info-layover');
+    // lo rendo rimuovo da schermo
+    layoverElement.classList.add('d-none');
+})
+
 
 /****************************************************************
     funzione di avvio del gioco
@@ -62,6 +85,9 @@ function playGame() {
     // reset status img
     statusImg.src = "img/smile.png";
     // console.dir(statusImg);
+
+    // rimuovo dal dom le info
+    infoWrapperElemen.classList.add('d-none')
 
 
     // recupero difficoltà dal DOM
@@ -93,7 +119,7 @@ function playGame() {
 
     coefDiff = 1
     let bombsNum = getBombsNum(rowNum);
-    console.log(bombsNum);
+    // console.log(bombsNum);
 
     // metto nel DOM il numero di caselle libere
     bombsNumElement.innerHTML = cellsNum - bombsNum
