@@ -186,6 +186,21 @@ button .navbar-toggler-icon {
     font-size: 1.25rem;
 }
 
+#exit {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: tomato;
+    border: 1px solid black;
+    width: 20px;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 @media (min-width: 576px) {
     .info-container {
         padding: 2rem 4rem;
@@ -194,6 +209,12 @@ button .navbar-toggler-icon {
 
     .info-container h2 {
         font-size: 1.5rem;
+    }
+
+    #exit {
+        top: 20px;
+        right: 30px;
+        width: 30px;
     }
 }
 
@@ -208,6 +229,10 @@ button .navbar-toggler-icon {
 
     .info-container h2 {
         font-size: 2rem;
+    }
+
+    #exit {
+        width: 40px;
     }
 }
 
@@ -229,19 +254,4 @@ button .navbar-toggler-icon {
     #info-layover {
         padding: 0 10rem;
     }
-}
-
-#exit {
-    position: absolute;
-    top: 20px;
-    right: 40px;
-    cursor: pointer;
-    color: tomato;
-    border: 1px solid black;
-    width: 30px;
-    aspect-ratio: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
 }
