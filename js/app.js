@@ -391,17 +391,17 @@ function flagHandler() {
     funzione che gestisce il rivelamento degli elementi adiacenti
 ****************************************************************/
 function revealArea(x, y) {
-    // inizializzo il contatore di bombe
-    let counter = 0;
-    // in ogni caso, se sto controllando, rivelo la casella
-    matrix[x][y].classList.add('clicked');
-
     //decremento contatore celle da rivelare
     bombsNumElement.innerHTML -= 1;
     // SE arrivo a 0 => VITTORIA
     if (bombsNumElement.innerHTML == 0) {
         youWin();
     }
+
+    // inizializzo il contatore di bombe
+    let counter = 0;
+    // in ogni caso, se sto controllando, rivelo la casella
+    matrix[x][y].classList.add('clicked');
 
     // controllo a riga -1, riga e riga+1
     for (let i = x - 1; i <= x + 1; i++) {
@@ -446,6 +446,9 @@ function revealArea(x, y) {
     }
 }
 
+/****************************************************************
+    funzione che gestisce la vittoria
+****************************************************************/
 function youWin() {
     clearGame();
     statusImg.src = "img/cool.png";
