@@ -263,17 +263,23 @@ function createMatrix(row, grid) {
     funzione che aggiunge l'event reveal a tutti gli elementi
 ****************************************************************/
 function addHandler() {
+    // PER OGNI riga
     for (let x = 0; x < matrix.length; x++) {
+        //PER OGNI colonna
         for (let y = 0; y < matrix.length; y++) {
+            // SE l'elemento non è già stato rivelato
             if (!matrix[x][y].classList.contains('clicked')) {
+                // aggiungo l'event listener reveal
                 matrix[x][y].addEventListener('click', revealHandler);
 
                 // TODO: try clickHandler.bind(matrix[x][y],matrix)
 
-                // implemento la bandierina col click destro
+                // implemento la bandierina col click destro - versione deskop
                 matrix[x][y].addEventListener('contextmenu', function (ev) {
+                    // rimuovo il comportamento di default del click destro
                     ev.preventDefault();
 
+                    // TODO: perché devo ripetere questo if?
                     if (!this.classList.contains('clicked')) {
                         if (this.innerHTML == '') {
                             this.innerHTML = '&#9873;';
@@ -349,7 +355,7 @@ function flagHandler() {
             if (matrix[i][j] === this) {
                 x = i;
                 y = j;
-                break;
+                break; // al ritrovamento degli indici interrompo il ciclo
             }
         }
     }
