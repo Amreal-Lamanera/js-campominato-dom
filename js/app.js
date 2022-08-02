@@ -165,7 +165,7 @@ function revealHandler() {
     matrix[x][y].classList.toggle('clicked');
 
     // controllo se ho trovato una bomba
-    if (bombsArray.includes(parseInt(matrix[x][y].dataset.myCell))) {
+    if (isBomb(matrix[x][y])) {
         statusImg.src = "img/sad.png"
         matrix[x][y].innerHTML = '&#128165;';
         matrix[x][y].classList.add('bomb');
@@ -179,6 +179,14 @@ function revealHandler() {
 
     // dobbiamo far sì che una volta partita la funzione venga rimosso l'evento
     matrix[x][y].removeEventListener('click', revealHandler);
+}
+
+/****************************************************************
+    funzione che ritorna true se l'elemento è una bomba
+****************************************************************/
+function isBomb(elem) {
+    const num = parseInt(elem.dataset.myCell);
+    return bombsArray.includes(num);
 }
 
 /****************************************************************
@@ -400,7 +408,7 @@ function revealArea(x, y) {
                 // SE l'indice esiste
                 if (j >= 0 && j < matrix.length) {
                     // SE è una bomba
-                    if (bombsArray.includes(parseInt(matrix[i][j].dataset.myCell))) {
+                    if (isBomb(matrix[i][j])) {
                         // incremento il contatore di bombe
                         counter++;
                     }
@@ -440,7 +448,7 @@ function revealArea(x, y) {
 function revealAll(explosion) {
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix.length; y++) {
-            if (bombsArray.includes(parseInt(matrix[x][y].dataset.myCell))) {
+            if (isBomb(matrix[x][y])) {
                 if (matrix[x][y] !== explosion) {
                     matrix[x][y].innerHTML = '&#128163';
                     matrix[x][y].classList.add('bomb')
