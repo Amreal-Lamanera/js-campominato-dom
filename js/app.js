@@ -296,16 +296,25 @@ function addHandler() {
     funzione che cambia l'handler reveal-flag
 ****************************************************************/
 function changeHandler() {
+    // SE flag è false => sono nello stato di reveal
     if (!flag) {
+        // rimuovo gli event listener
         clearGame();
+        // chiamo la funzione che aggiunge l'evento flag agli elementi
         addFlagHandler();
+        // cambio testo nel pulsante
         flagBtn.innerHTML = "Reveal";
+        // cambio lo stato di flag => adesso sono nello stato di flag
         flag = true;
     }
-    else {
+    else { // ALTRIMENTI (sono nello stato di flag)
+        // rimuovo gli event listener
         clearGame();
+        // chiamo la funzione che aggiunge l'evento reveal agli elementi
         addHandler();
+        // cambio testo nel pulsante
         flagBtn.innerHTML = "Flag &#9872;";
+        // cambio lo stato di flag => adesso sono nello stato di reveal
         flag = false;
     }
 }
@@ -314,9 +323,13 @@ function changeHandler() {
     funzione che aggiunge l'event flag a tutti gli elementi
 ****************************************************************/
 function addFlagHandler() {
+    // PER OGNI riga
     for (let x = 0; x < matrix.length; x++) {
+        // PER OGNI colonna
         for (let y = 0; y < matrix.length; y++) {
+            // SE l'elemento non è stato rivelato
             if (!matrix[x][y].classList.contains('clicked')) {
+                // aggiungp l'event listener flagHandler
                 matrix[x][y].addEventListener('click', flagHandler);
             }
         }
@@ -327,6 +340,7 @@ function addFlagHandler() {
     funzione che gestisce l'event flag
 ****************************************************************/
 function flagHandler() {
+    // cerco gli indici della matrice dell'elemento che è stato cliccato
     let x;
     let y;
 
@@ -339,10 +353,14 @@ function flagHandler() {
             }
         }
     }
+    // SE l'elemento cliccato non è già stato rivelato
     if (!matrix[x][y].classList.contains('clicked')) {
+        // SE è vuoto
         if (matrix[x][y].innerHTML == '') {
+            // metto la bandierina
             matrix[x][y].innerHTML = '&#9873;';
-        } else {
+        } else { // ALTRIMENTI (se ha la bandierina)
+            // svuoto il contenuto
             matrix[x][y].innerHTML = '';
         }
     }
@@ -364,7 +382,7 @@ function revealArea(x, y) {
         clearGame();
         statusImg.src = "img/cool.png";
         bombsNumElement.innerHTML = "Hai vinto!";
-        revealAll(matrix);
+        revealAll();
     }
 
     // controllo a riga -1, riga e riga+1
