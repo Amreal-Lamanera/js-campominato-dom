@@ -202,73 +202,11 @@ function getSquareElement() {
 }
 
 /****************************************************************
-    funzione che gestisce l'event reveal
-****************************************************************/
-function revealHandler() {
-    // mi servono gli indici della matrice all'elemento che sto utilizzando
-    let x;
-    let y;
-
-    for (let i = 0; i < matrix.length; i++) {
-        for (let j = 0; j < matrix.length; j++) {
-            if (matrix[i][j] === this) {
-                x = i;
-                y = j;
-                break;
-            }
-        }
-    }
-
-    // aggiungo classe clicked in ogni caso
-    matrix[x][y].classList.toggle('clicked');
-
-    // controllo se ho trovato una bomba
-    if (isBomb(matrix[x][y])) {
-        gameOver(matrix[x][y]);
-    } else { // altrimenti svelo l'area adiacente senza bombe
-        revealArea(x, y);
-    }
-
-    // rimuovo l'evento reveal all'elemento cliccato
-    matrix[x][y].removeEventListener('click', revealHandler);
-}
-
-/****************************************************************
     funzione che ritorna true se l'elemento è una bomba
 ****************************************************************/
 function isBomb(elem) {
     const num = parseInt(elem.dataset.myCell);
     return bombsArray.includes(num);
-}
-
-/****************************************************************
-    funzione che gestisce il game over
-****************************************************************/
-function gameOver(elem) {
-    timerStop();
-    bombsNumElement.innerHTML = "Game over! <br> Hai totalizzato: " + calcResult() + " punti";
-    statusImg.src = "img/sad.png"
-    elem.innerHTML = '&#128165;';
-    elem.classList.add('bomb');
-    revealAll(elem);
-    flagBtn.classList.add('disabled');
-    clearGame();
-}
-
-/****************************************************************
-    funzione che rimuove gli eventi
-****************************************************************/
-function clearGame() {
-    // so che se non è vuoto, tutti gli elementi avranno ALMENO la classe square
-    const squareElements = document.querySelectorAll('.square');
-    // console.log(squareElements.length);
-
-    // PER OGNI elemento square, rimuovo l'evento click
-    for (let i = 0; i < squareElements.length; i++) {
-        squareElements[i].removeEventListener('click', revealHandler);
-        squareElements[i].removeEventListener('click', flagHandler);
-        // console.dir(squareElements[i]);
-    }
 }
 
 /****************************************************************
@@ -373,6 +311,183 @@ function addHandler() {
 }
 
 /****************************************************************
+    funzione che gestisce l'event reveal
+****************************************************************/
+function revealHandler() {
+    // mi servono gli indici della matrice all'elemento che sto utilizzando
+    let x;
+    let y;
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (matrix[i][j] === this) {
+                x = i;
+                y = j;
+                break;
+            }
+        }
+    }
+
+    // aggiungo classe clicked in ogni caso
+    matrix[x][y].classList.toggle('clicked');
+
+    // controllo se ho trovato una bomba
+    if (isBomb(matrix[x][y])) {
+        gameOver(matrix[x][y]);
+    } else { // altrimenti svelo l'area adiacente senza bombe
+        revealArea(x, y);
+    }
+
+    // rimuovo l'evento reveal all'elemento cliccato
+    matrix[x][y].removeEventListener('click', revealHandler);
+}
+
+
+/****************************************************************
+    funzione che gestisce il rivelamento degli elementi adiacenti
+****************************************************************/
+function revealArea(x, y) {
+    //decremento contatore celle da rivelare
+    bombsNumElement.innerHTML -= 1;
+    // SE arrivo a 0 => VITTORIA
+    if (bombsNumElement.innerHTML == 0) {
+        youWin();
+    }
+
+    // inizializzo il contatore di bombe
+    let counter = 0;
+    // in ogni caso, se sto controllando, rivelo la casella
+    matrix[x][y].classList.add('clicked');
+
+    // controllo a riga -1, riga e riga+1
+    for (let i = x - 1; i <= x + 1; i++) {
+        // SE l'indice esiste
+        if (i >= 0 && i < matrix.length) {
+            // controllo a colonna -1, colonna e colonna+1
+            for (let j = y - 1; j <= y + 1; j++) {
+                // SE l'indice esiste
+                if (j >= 0 && j < matrix.length) {
+                    // SE è una bomba
+                    if (isBomb(matrix[i][j])) {
+                        // incremento il contatore di bombe
+                        counter++;
+                    }
+                }
+            }
+        }
+    }
+
+    // in ogni caso inserisco il risultato del conteggio bombe adiacenti nella casella
+    matrix[x][y].innerHTML = counter;
+
+    // controllo a riga -1, riga e riga+1
+    for (let i = x - 1; i <= x + 1; i++) {
+        // SE l'indice esiste
+        if (i >= 0 && i < matrix.length) {
+            // controllo a colonna -1, colonna e colonna+1
+            for (let j = y - 1; j <= y + 1; j++) {
+                // SE l'indice esiste
+                if (j >= 0 && j < matrix.length) {
+                    // SE non è se stesso (altrimenti va in loop)
+                    // E SE non contiente la classe clicked (loop di nuovo - cella già controllata)
+                    if ((i !== x || j !== y) && !matrix[i][j].classList.contains('clicked')) {
+                        // SE non ha bombe dintorno
+                        if (counter === 0) {
+                            revealArea(i, j)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/****************************************************************
+ funzione che gestisce la vittoria
+****************************************************************/
+function youWin() {
+    timerStop();
+    clearGame();
+    statusImg.src = "img/cool.png";
+    bombsNumElement.innerHTML = "Hai vinto! <br> Hai totalizzato: " + calcResult() + " punti";
+    revealAll();
+}
+
+/****************************************************************
+    funzione che gestisce il game over
+****************************************************************/
+function gameOver(elem) {
+    timerStop();
+    bombsNumElement.innerHTML = "Game over! <br> Hai totalizzato: " + calcResult() + " punti";
+    statusImg.src = "img/sad.png"
+    elem.innerHTML = '&#128165;';
+    elem.classList.add('bomb');
+    revealAll(elem);
+    flagBtn.classList.add('disabled');
+    clearGame();
+}
+
+/****************************************************************
+    funzione che rimuove gli eventi
+****************************************************************/
+function clearGame() {
+    // so che se non è vuoto, tutti gli elementi avranno ALMENO la classe square
+    const squareElements = document.querySelectorAll('.square');
+    // console.log(squareElements.length);
+
+    // PER OGNI elemento square, rimuovo l'evento click
+    for (let i = 0; i < squareElements.length; i++) {
+        squareElements[i].removeEventListener('click', revealHandler);
+        squareElements[i].removeEventListener('click', flagHandler);
+        // console.dir(squareElements[i]);
+    }
+}
+
+/****************************************************************
+ funzione che svela tutte le celle
+ ****************************************************************/
+function revealAll(explosion) {
+    for (let x = 0; x < matrix.length; x++) {
+        for (let y = 0; y < matrix.length; y++) {
+            if (isBomb(matrix[x][y])) {
+                if (matrix[x][y] !== explosion) {
+                    matrix[x][y].innerHTML = '&#128163';
+                    matrix[x][y].classList.add('bomb')
+                }
+            }
+            matrix[x][y].classList.add('clicked');
+        }
+    }
+}
+
+/****************************************************************
+ funzione che calcola il risultato finale
+ ****************************************************************/
+function calcResult() {
+    let result;
+    console.log(rowNum);
+    console.log(bombsArray.length);
+    console.log(parseInt(bombsNumElement.innerHTML));
+    console.log(coefDiff);
+    console.log(timer);
+    let revealedCells = (rowNum ** 2 - bombsArray.length) - parseInt(bombsNumElement.innerHTML)
+
+    // punteggio: celle rivelate * coefficiente - tempo impiegato
+    result = Math.floor((revealedCells * coefDiff) - timer / 4);
+
+    // bonus vittoria
+    if (parseInt(bombsNumElement.innerHTML) === 0) {
+        result += 30;
+    }
+
+    if (result < 0) {
+        result = 0;
+    }
+
+    return result;
+}
+
+/****************************************************************
     TODO:   FUNZIONI CHE LAVORANO SOLO SU MOBILE
 ****************************************************************/
 
@@ -448,118 +563,4 @@ function flagHandler() {
             matrix[x][y].innerHTML = '';
         }
     }
-}
-
-/****************************************************************
-    funzione che gestisce il rivelamento degli elementi adiacenti
-****************************************************************/
-function revealArea(x, y) {
-    //decremento contatore celle da rivelare
-    bombsNumElement.innerHTML -= 1;
-    // SE arrivo a 0 => VITTORIA
-    if (bombsNumElement.innerHTML == 0) {
-        youWin();
-    }
-
-    // inizializzo il contatore di bombe
-    let counter = 0;
-    // in ogni caso, se sto controllando, rivelo la casella
-    matrix[x][y].classList.add('clicked');
-
-    // controllo a riga -1, riga e riga+1
-    for (let i = x - 1; i <= x + 1; i++) {
-        // SE l'indice esiste
-        if (i >= 0 && i < matrix.length) {
-            // controllo a colonna -1, colonna e colonna+1
-            for (let j = y - 1; j <= y + 1; j++) {
-                // SE l'indice esiste
-                if (j >= 0 && j < matrix.length) {
-                    // SE è una bomba
-                    if (isBomb(matrix[i][j])) {
-                        // incremento il contatore di bombe
-                        counter++;
-                    }
-                }
-            }
-        }
-    }
-
-    // in ogni caso inserisco il risultato del conteggio bombe adiacenti nella casella
-    matrix[x][y].innerHTML = counter;
-
-    // controllo a riga -1, riga e riga+1
-    for (let i = x - 1; i <= x + 1; i++) {
-        // SE l'indice esiste
-        if (i >= 0 && i < matrix.length) {
-            // controllo a colonna -1, colonna e colonna+1
-            for (let j = y - 1; j <= y + 1; j++) {
-                // SE l'indice esiste
-                if (j >= 0 && j < matrix.length) {
-                    // SE non è se stesso (altrimenti va in loop)
-                    // E SE non contiente la classe clicked (loop di nuovo - cella già controllata)
-                    if ((i !== x || j !== y) && !matrix[i][j].classList.contains('clicked')) {
-                        // SE non ha bombe dintorno
-                        if (counter === 0) {
-                            revealArea(i, j)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/****************************************************************
-    funzione che gestisce la vittoria
-****************************************************************/
-function youWin() {
-    timerStop();
-    clearGame();
-    statusImg.src = "img/cool.png";
-    bombsNumElement.innerHTML = "Hai vinto! <br> Hai totalizzato: " + calcResult() + " punti";
-    revealAll();
-}
-
-/****************************************************************
-    funzione che svela tutte le celle
-****************************************************************/
-function revealAll(explosion) {
-    for (let x = 0; x < matrix.length; x++) {
-        for (let y = 0; y < matrix.length; y++) {
-            if (isBomb(matrix[x][y])) {
-                if (matrix[x][y] !== explosion) {
-                    matrix[x][y].innerHTML = '&#128163';
-                    matrix[x][y].classList.add('bomb')
-                }
-            }
-            matrix[x][y].classList.add('clicked');
-        }
-    }
-}
-
-/****************************************************************
-    funzione che calcola il risultato finale
-****************************************************************/
-function calcResult() {
-    let result;
-    console.log(rowNum);
-    console.log(bombsArray.length);
-    console.log(parseInt(bombsNumElement.innerHTML));
-    console.log(coefDiff);
-    console.log(timer);
-    let revealedCells = (rowNum ** 2 - bombsArray.length) - parseInt(bombsNumElement.innerHTML)
-
-    // punteggio: celle rivelate * coefficiente - tempo impiegato
-    result = Math.floor((revealedCells * coefDiff) - timer / 4);
-
-    // bonus vittoria
-    if (parseInt(bombsNumElement.innerHTML) === 0) {
-        result += 30;
-    }
-
-    if (result < 0) {
-        result = 0;
-    }
-
-    return result;
 }
