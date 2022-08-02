@@ -100,9 +100,13 @@ function playGame() {
     }
 
     // implemento una modalità mobile che lavorerà sulla metà delle caselle ( per gestire meglio il layout)
-    const mediaQuery = window.matchMedia('(min-width: 576px)')
-    if (!mediaQuery.matches) {
+    const mediaQueryMobile = window.matchMedia('(min-width: 576px)');
+    if (!mediaQueryMobile.matches) {
         rowNum /= 2;
+    }
+
+    const mediaQueryTillDesk = window.matchMedia('(min-width: 992px)')
+    if (!mediaQueryTillDesk.matches) {
         document.getElementById('flagBtn').classList.remove('d-none');
     }
 
