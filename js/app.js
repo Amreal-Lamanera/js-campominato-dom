@@ -42,6 +42,8 @@ let coefDiff;
 // recupero info-wrapper
 const infoWrapperElemen = document.getElementById('info-wrapper');
 
+const mediaQueryMobile = window.matchMedia('(min-width: 576px)');
+
 // recupero elemento exit e info
 const exitElemen = document.getElementById('exit');
 const infoElemen = document.getElementById('info');
@@ -100,7 +102,6 @@ function playGame() {
     }
 
     // implemento una modalità mobile che lavorerà sulla metà delle caselle ( per gestire meglio il layout)
-    const mediaQueryMobile = window.matchMedia('(min-width: 576px)');
     if (!mediaQueryMobile.matches) {
         rowNum /= 2;
     }
@@ -249,7 +250,7 @@ const getBombsNum = (dim) => {
             dim *= 2;
             break;
         case 22:
-            coefDiff = 4;
+            coefDiff = 3;
             dim *= 3;
             break;
         // versione mobile
@@ -258,7 +259,7 @@ const getBombsNum = (dim) => {
             dim -= 2;
             break;
         case 11:
-            coefDiff = 3;
+            coefDiff = 2;
             dim += 4;
             break;
     }
@@ -495,23 +496,26 @@ function revealAll(explosion) {
  ****************************************************************/
 function calcResult() {
     let result;
-    console.log(rowNum);
-    console.log(bombsArray.length);
-    console.log(parseInt(bombsNumElement.innerHTML));
-    console.log(coefDiff);
-    console.log(timer);
-    let revealedCells = (rowNum ** 2 - bombsArray.length) - parseInt(bombsNumElement.innerHTML)
+    // console.log(rowNum);
+    // console.log(bombsArray.length);
+    // console.log(parseInt(bombsNumElement.innerHTML));
+    // console.log(coefDiff);
+    // console.log(timer);
 
-    // punteggio: celle rivelate * coefficiente - tempo impiegato
-    result = Math.floor((revealedCells * coefDiff) - timer / 4);
+    // calcolo il numero di celle rivelate
+    const numRevealedCells = (rowNum ** 2 - bombsArray.length) - parseInt(bombsNumElement.innerHTML);
+    // punteggio: [celle rivelate] * 10 * [coeff. difficoltà]
+    result = numRevealedCells * 10 * coefDiff;
+
+    const bonus = Math.ceil(rowNum ** 2 * coefDiff * Math.ceil(3600 / timer) / 6);
 
     // bonus vittoria
     if (parseInt(bombsNumElement.innerHTML) === 0) {
-        result += 30;
+        result += bonus;
     }
 
-    if (result < 0) {
-        result = 0;
+    if (mediaQueryMobile.matches && coefDiff === 0.5) {
+        result /= 2;
     }
 
     return result;
